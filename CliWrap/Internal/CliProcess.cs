@@ -49,6 +49,15 @@ namespace CliWrap.Internal
 
                 // Release signal
                 _exitSignal.Release();
+
+                // FIXME: This is just some test code and prob. not correct
+                if (_nativeProcess.HasExited)
+                {
+                    _nativeProcess.CancelOutputRead();
+                    _nativeProcess.CancelErrorRead();
+                    _standardOutputEndSignal.Release();
+                    _standardErrorEndSignal.Release();
+                }
             };
 
             // Wire stdout
