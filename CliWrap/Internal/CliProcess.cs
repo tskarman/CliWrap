@@ -148,11 +148,15 @@ namespace CliWrap.Internal
         {
             try
             {
+                Debug.WriteLine($"{DateTimeOffset.UtcNow.ToString("o")} {nameof(CliProcess)} - {nameof(TryKill)} (1)");
                 _nativeProcess.Kill();
+                Debug.WriteLine($"{DateTimeOffset.UtcNow.ToString("o")} {nameof(CliProcess)} - {nameof(TryKill)} (2)");
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.GetType().FullName + ": " + ex.Message);
+
                 return false;
             }
         }

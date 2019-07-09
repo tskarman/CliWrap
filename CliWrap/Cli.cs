@@ -290,7 +290,12 @@ namespace CliWrap
         {
             // Set up execution context
             using (var process = StartProcess())
-            using (_cancellationToken.Register(() => process.TryKill()))
+            using (_cancellationToken.Register(() =>
+            {
+                Debug.WriteLine($"{DateTimeOffset.UtcNow.ToString("o")} {nameof(Cli)} - {nameof(ExecuteAsync)}_Register (1)");
+                process.TryKill();
+                Debug.WriteLine($"{DateTimeOffset.UtcNow.ToString("o")} {nameof(Cli)} - {nameof(ExecuteAsync)}_Register (2)");
+            }))
             {
                 // Pipe stdin
                 await process.PipeStandardInputAsync(_standardInput);
@@ -298,8 +303,12 @@ namespace CliWrap
                 // Wait for exit
                 await process.WaitForExitAsync();
 
+                Debug.WriteLine($"{DateTimeOffset.UtcNow.ToString("o")} {nameof(Cli)} - {nameof(ExecuteAsync)} (1)");
+
                 // Throw if cancelled
                 _cancellationToken.ThrowIfCancellationRequested();
+
+                Debug.WriteLine($"{DateTimeOffset.UtcNow.ToString("o")} {nameof(Cli)} - {nameof(ExecuteAsync)} (2)");
 
                 // Create execution result
                 var result = new ExecutionResult(process.ExitCode,
